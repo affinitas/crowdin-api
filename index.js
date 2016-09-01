@@ -21,9 +21,10 @@ function handleRequest(request) {
 	return request.then(function(body) {
 		return JSON.parse(body);
 	}).then(function(result) {
-		if (!result.success) {
-			throwError(result);
-		}
+		// not every response has an success property (e.g. projectInfo)
+		//if (!result.success) {
+		//	throwError(result);
+		//}
 
 		return result;
 	}).catch(function(result) {
@@ -55,7 +56,7 @@ function postApiCall(apiUrl, getOptions, postOptions) {
 	validateKey();
 
 	var url = baseUrl + '/api/' + apiUrl;
-	var params = extend(getOptions, {
+	var params = extend(getOptions || {}, {
 		json: true,
 		key: apiKey
 	});
@@ -63,7 +64,7 @@ function postApiCall(apiUrl, getOptions, postOptions) {
 	return handleRequest(request.post({
 		url: url,
 		qs: params,
-		formData: postOptions
+		formData: postOptions || {}
 	}));
 }
 
@@ -200,9 +201,10 @@ module.exports = {
 	 * Add directory to Crowdin project.
 	 * @param projectName {String} Should contain the project identifier.
 	 * @param directory {String} Directory name (with path if nested directory should be created).
+	 * @param params {Object} Parameters for the directory.
 	 */
-	createDirectory: function(projectName, directory) {
-		return postApiCall('project/' + projectName + '/add-directory', {}, {
+	createDirectory: function(projectName, directory, params) {
+		return postApiCall('project/' + projectName + '/add-directory', params, {
 			name: directory
 		});
 	},
