@@ -95,10 +95,16 @@ module.exports = {
 	addFile: function(projectName, files, params) {
 		var filesInformation = {};
 
-		files.forEach(function(fileName) {
-			var index = 'files[' + fileName + ']';
-			filesInformation[index] = fs.createReadStream(fileName);
-		});
+    files.forEach(function(file) {
+      if(typeof file === 'string') {
+        var index = 'files[' + file + ']';
+        filesInformation[index] = fs.createReadStream(file);
+      }
+      else if(file.path && file.relative) {
+        var index = 'files[' + file.relative + ']';
+        filesInformation[index] = fs.createReadStream(file.path);
+      }
+    });
 
 		return postApiCall('project/' + projectName + '/add-file', {}, extend(filesInformation, params));
 	},
@@ -112,10 +118,16 @@ module.exports = {
 	updateFile: function(projectName, files, params) {
 		var filesInformation = {};
 
-		files.forEach(function(fileName) {
-			var index = 'files[' + fileName + ']';
-			filesInformation[index] = fs.createReadStream(fileName);
-		});
+    files.forEach(function(file) {
+      if(typeof file === 'string') {
+        var index = 'files[' + file + ']';
+        filesInformation[index] = fs.createReadStream(file);
+      }
+      else if(file.path && file.relative) {
+        var index = 'files[' + file.relative + ']';
+        filesInformation[index] = fs.createReadStream(file.path);
+      }
+    });
 
 		return postApiCall('project/' + projectName + '/update-file', {}, extend(filesInformation, params));
 	},
