@@ -154,9 +154,15 @@ module.exports = {
 			language: language
 		};
 
-		files.forEach(function(fileName) {
-			var index = 'files[' + fileName + ']';
-			filesInformation[index] = fs.createReadStream(fileName);
+		files.forEach(function(file) {
+			if(typeof file === 'string') {
+				var index = 'files[' + file + ']';
+				filesInformation[index] = fs.createReadStream(file);
+			}
+			else if(file.path && file.relative) {
+				var index = 'files[' + file.relative + ']';
+				filesInformation[index] = fs.createReadStream(file.path);
+			}
 		});
 
 		return postApiCall('project/' + projectName + '/upload-translation', {}, extend(filesInformation, params));
